@@ -59,7 +59,7 @@ const uint8_t Init[26] = {
 // I2C Functions declaration
 extern "C" {void start();}
 extern "C" {void stop();}
-void set_draw_region(uint8_t, uint8_t, uint8_t, uint8_t );
+extern "C" {void set_draw_region(uint8_t, uint8_t, uint8_t, uint8_t );}
 extern "C" {bool Tx(uint8_t);}
 uint8_t Rx(uint8_t);
 
@@ -134,15 +134,32 @@ int main(void)
         if (h > H_MAX)
             h = 0;
 
+        start();
+        Tx(ADDR);
+        Tx(0x00);
+        Tx(0x21); // Set Column
+        Tx(0);    // Start column
+        Tx(127);    // End at
+        Tx(0x22); // Set Page
+        Tx(3);    // Start at page 4
+        Tx(3);    // End at page 4
+        stop();
+
+
+        print_enemies();
 
         // start();
         // Tx(ADDR);
-        // Tx(0x40);
-
-
-        print_player(h);
- 
+        // Tx(0x00);
+        // Tx(0x21); // Set Column
+        // Tx(10);    // Start column
+        // Tx(16);    // End at
+        // Tx(0x22); // Set Page
+        // Tx(0);    // Start at page 1
+        // Tx(3);    // End at page 4
         // stop();
+        // print_player(h);
+ 
 
         // h+=3;
     }
