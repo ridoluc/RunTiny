@@ -55,43 +55,16 @@ const uint8_t Init[26] = {
     0xAF // Display on
 };
 
-// const uint8_t HELLO[70] ={
-//     0xff,0x08,0x08,0x08,0x08,0xff,0x00, //H
-//     0xff,0x89,0x89,0x89,0x89,0x81,0x00, //E
-//     0xff,0x80,0x80,0x80,0x80,0x80,0x00, //L
-//     0xff,0x80,0x80,0x80,0x80,0x80,0x00, //L
-//     0x3c,0x42,0x81,0x81,0x81,0x42,0x3c, //O
-//     0x00,0x00,0x00,0x00,0x00,0x00,0x00, //' '
-//     0x01,0x01,0x01,0xff,0x01,0x01,0x01, //T
-//     0x00,0x81,0x81,0xff,0x81,0x81,0x00, //I
-//     0xff,0x02,0x04,0x08,0x10,0xff,0x00, //N
-//     0x01,0x06,0x08,0xf0,0x08,0x06,0x01  //Y
-// };
-
-// const uint8_t HELLO1[56] ={
-//     0x00,0x00,0x00,0x00,0x00,0x00,0x00, //' '
-//     0x00,0x00,0x00,0x00,0x00,0x00,0x00, //' '
-//     0x00,0x00,0x00,0x00,0x00,0x00,0x00, //' '
-//     0x00,0x00,0x00,0x00,0x00,0x00,0x00, //' '
-//     0xff,0x08,0x08,0x08,0x08,0xff,0x00, //H
-//     0xff,0x89,0x89,0x89,0x89,0x81,0x00, //E
-//     0xff,0x80,0x80,0x80,0x80,0x80,0x00, //L
-//     0xff,0x80,0x80,0x80,0x80,0x80,0x00, //L
-//     // 0x3c,0x42,0x81,0x81,0x81,0x42,0x3c, //O
-// };
-
-// const uint8_t Sprite1[7] = {
-//     0x1c, 0xf8, 0x38, 0xfe, 0x1f, 0x07, 0x02
-//     // 0xc1,0x8f,0x83,0xef,0xf1,0x70,0x20
-// };
 
 // I2C Functions declaration
-void start();
-void stop();
+extern "C" {void start();}
+extern "C" {void stop();}
+void set_draw_region(uint8_t, uint8_t, uint8_t, uint8_t );
 extern "C" {bool Tx(uint8_t);}
 uint8_t Rx(uint8_t);
 
-extern "C" {void print(uint8_t);};
+extern "C" {void print_player(uint8_t);};
+extern "C" {void print_enemies(void);}
 
 void clear()
 {
@@ -130,27 +103,6 @@ int main(void)
     /* Clear the display */
     clear();
 
-    /* Set position for the text */
-    // start();
-    // Tx(ADDR);
-    // Tx(0x00);
-    // Tx(0x21);   // Set Column
-    // Tx(0x19);   // Start at column 25
-    // Tx(0x7F);   // End at 128
-    // Tx(0x22);   // Set Page
-    // Tx(0x01);   // Start at page 1
-    // Tx(0x01);   // End at page 1
-    // stop();
-
-    // /* Write the message*/
-    // start();
-    // Tx(ADDR);
-    // Tx(0x40);
-    // for (uint8_t i = 0; i < 70; i++)
-    // {
-    //     Tx(HELLO[i]);
-    // }
-    // stop();
 
 
     uint8_t h = 0;
@@ -166,18 +118,8 @@ int main(void)
     Tx(3);    // End at page 4
     stop();
 
-    // start();
-    // Tx(ADDR);
-    // Tx(0x40);
-    // while(page--){
-    //     while(cols--){
-    //     Tx( Sprite1[cols]  << h >>8*page );
+    // set_draw_region(10,16,0,3);
 
-    //     };
-    //     cols=7;
-    //     // page--;
-    // };
-    // stop();
     for (;;)
     {
 
@@ -192,35 +134,31 @@ int main(void)
         if (h > H_MAX)
             h = 0;
 
-        // Print column
-        start();
-        Tx(ADDR);
-        Tx(0x40);
 
-        print(h);
+        // start();
+        // Tx(ADDR);
+        // Tx(0x40);
 
-        // while (cols--)
-        // {
-        //     *c = (Sprite1[cols] << h);
 
-        //     Tx(c[0]);
-        //     Tx(c[1]);
-        //     Tx(c[2]);
-        //     Tx(c[3]);
-        // };
-        stop();
+        print_player(h);
+ 
+        // stop();
 
-        // while(page--){
-        //     while(cols--){
-        //     // Tx( Sprite1[cols]  << h >> 8*page );
-        //         if(h<page*8)Tx(Sprite1[cols]>>(page*8-h));
-        //         else Tx(Sprite1[cols]<<(h-page*8));
-
-        //     };
-        //     cols=7;
-        // };
         // h+=3;
     }
+}
+
+void set_draw_region(uint8_t col_start,uint8_t col_end, uint8_t pg_start, uint8_t pg_end){
+    start();
+    Tx(ADDR);
+    Tx(0x00);
+    Tx(0x21); // Set Column
+    Tx(col_start);    // Start column
+    Tx(col_end);    // End at
+    Tx(0x22); // Set Page
+    Tx(pg_start);    // Start at page 1
+    Tx(pg_end);    // End at page 4
+    stop();
 }
 
 /*  i2c start sequence */

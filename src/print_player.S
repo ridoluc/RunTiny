@@ -13,13 +13,18 @@
 #define _h     R22
 #define _col   R23
 
-.global print
+.global print_player
 
-print:
+print_player:
+	mov R26, R24 ; store the player height
+    rcall start
+    ldi R24, 0x78
+    rcall Tx
+    ldi R24, 0x40
+    rcall Tx
     ldi _col, 7 ;same as the sprite width 
     ldi ZL, lo8(sprite_test+0x4000) 
     ldi ZH, hi8(sprite_test+0x4000) 
-	mov R26, R24
 loop_columns:
     ldi page1, 0x00
     ldi page2, 0x00
@@ -47,6 +52,7 @@ dec_h:
     rcall Tx
     dec _col
     brne loop_columns
+    rcall stop
 ret
 
 
