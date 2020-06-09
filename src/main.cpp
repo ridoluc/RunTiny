@@ -65,6 +65,9 @@ uint8_t Rx(uint8_t);
 
 extern "C" {void print_player(uint8_t);};
 extern "C" {void print_enemies(void);}
+extern "C" {void update_enemy_pos(void);}
+
+int8_t enemy_pos[3]={20,50,90};
 
 void clear()
 {
@@ -118,6 +121,18 @@ int main(void)
     Tx(3);    // End at page 4
     stop();
 
+
+        start();
+        Tx(ADDR);
+        Tx(0x00);
+        Tx(0x21); // Set Column
+        Tx(0);    // Start column
+        Tx(127);    // End at
+        Tx(0x22); // Set Page
+        Tx(3);    // Start at page 4
+        Tx(3);    // End at page 4
+        stop();
+
     // set_draw_region(10,16,0,3);
 
     for (;;)
@@ -134,16 +149,8 @@ int main(void)
         if (h > H_MAX)
             h = 0;
 
-        start();
-        Tx(ADDR);
-        Tx(0x00);
-        Tx(0x21); // Set Column
-        Tx(0);    // Start column
-        Tx(127);    // End at
-        Tx(0x22); // Set Page
-        Tx(3);    // Start at page 4
-        Tx(3);    // End at page 4
-        stop();
+        update_enemy_pos();
+
 
 
         print_enemies();
