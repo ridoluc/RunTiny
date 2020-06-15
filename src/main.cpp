@@ -31,7 +31,7 @@
 #define I2C_READ 0x01
 #define I2C_WRITE 0x00
 
-#define BIT8_TO_BIT16(a,b) ((b<<8)+a)
+#define BIT8_TO_BIT16(a, b) ((b << 8) + a)
 
 #define ADDR 0b01111000 //OLED Address plus write bit
 
@@ -57,20 +57,20 @@ const uint8_t Init[26] = {
     0xAF // Display on
 };
 
-
 // I2C Functions declaration
-extern "C" {void start();}
-extern "C" {void stop();}
-extern "C" {void set_draw_region(uint16_t, uint16_t );}
-extern "C" {bool Tx(uint8_t);}
+extern "C"{void start();}
+extern "C"{void stop();}
+extern "C"{void set_draw_region(uint16_t, uint16_t);}
+extern "C"{bool Tx(uint8_t);}
+
 uint8_t Rx(uint8_t);
 
-extern "C" {void print_player(uint8_t);};
-extern "C" {void print_enemies(void);}
-extern "C" {void update_enemy_pos(void);}
-extern "C" {void print_score(void);}
+extern "C"{void print_player(uint8_t);}
+extern "C"{void print_enemies(void);}
+extern "C"{void update_enemy_pos(void);}
+extern "C"{void print_score(void);}
 
-int8_t enemy_pos[3]={20,50,90};
+int8_t enemy_pos[3] = {20, 50, 90};
 
 void clear()
 {
@@ -91,7 +91,7 @@ int main(void)
 {
 
     DDRB = 3;
-    PUEB = (1<<PUEB2);
+    PUEB = (1 << PUEB2);
 
     _delay_ms(100);
 
@@ -109,46 +109,9 @@ int main(void)
     /* Clear the display */
     clear();
 
-
-
     uint8_t h = 0;
 
-    // start();
-    // Tx(ADDR);
-    // Tx(0x00);
-    // Tx(0x21); // Set Column
-    // Tx(10);    // Start column
-    // Tx(16);    // End at
-    // Tx(0x22); // Set Page
-    // Tx(0);    // Start at page 1
-    // Tx(3);    // End at page 4
-    // stop();
-
-    // start();
-    // Tx(ADDR);
-    // Tx(0x00);
-    // Tx(0x21); // Set Column
-    // Tx(100);    // Start column
-    // Tx(117);    // End at
-    // Tx(0x22); // Set Page
-    // Tx(1);    // Start at page 1
-    // Tx(1);    // End at page 4
-    // stop();
-    
-    // set_draw_region(100,117,1,1);
-        // start();
-        // Tx(ADDR);
-        // Tx(0x00);
-        // Tx(0x21); // Set Column
-        // Tx(0);    // Start column
-        // Tx(127);    // End at
-        // Tx(0x22); // Set Page
-        // Tx(3);    // Start at page 4
-        // Tx(3);    // End at page 4
-        // stop();
-    // set_draw_region(BIT8_TO_BIT16(10,16),BIT8_TO_BIT16(0,3));
-
-    // set_draw_region(BIT8_TO_BIT16(100,117),BIT8_TO_BIT16(1,1));
+  
 
     for (;;)
     {
@@ -156,8 +119,10 @@ int main(void)
         // page = 4;
         _delay_ms(500);
 
-        if(!(PINB & (1<<PINB2))) h+=4;
-        else if(h) h-=4;
+        if (!(PINB & (1 << PINB2)))
+            h += 4;
+        else if (h)
+            h -= 4;
         // if(h>H_MAX) PORTB =1;   // to do
         // if(!h) PORTB =0;        // to do
 
@@ -166,60 +131,20 @@ int main(void)
 
         update_enemy_pos();
 
-        
-
-    set_draw_region(BIT8_TO_BIT16(100,117),BIT8_TO_BIT16(0,0));
+        set_draw_region(BIT8_TO_BIT16(100, 117), BIT8_TO_BIT16(0, 0));
 
         print_score();
 
-        // start();
-        // Tx(ADDR);
-        // Tx(0x00);
-        // Tx(0x21); // Set Column
-        // Tx(10);    // Start column
-        // Tx(16);    // End at
-        // Tx(0x22); // Set Page
-        // Tx(0);    // Start at page 1
-        // Tx(3);    // End at page 4
-        // stop();
-    set_draw_region(BIT8_TO_BIT16(10,16),BIT8_TO_BIT16(0,3));
+        set_draw_region(BIT8_TO_BIT16(10, 16), BIT8_TO_BIT16(0, 3));
 
         print_player(h);
-     set_draw_region(BIT8_TO_BIT16(0,127),BIT8_TO_BIT16(3,3));
+        set_draw_region(BIT8_TO_BIT16(0, 127), BIT8_TO_BIT16(3, 3));
 
         print_enemies();
 
-        // h+=3;
+
     }
 }
-
-// void set_draw_region(uint8_t col_start,uint8_t col_end, uint8_t pg_start, uint8_t pg_end){
-//     start();
-//     Tx(ADDR);
-//     Tx(0x00);
-//     Tx(0x21); // Set Column
-//     Tx(col_start);    // Start column
-//     Tx(col_end);    // End at
-//     Tx(0x22); // Set Page
-//     Tx(pg_start);    // Start at page 1
-//     Tx(pg_end);    // End at page 4
-//     stop();
-// }
-// void set_draw_region(uint8_t col_start,uint8_t col_end, uint8_t pg_start, uint8_t pg_end){
-//     asm volatile(
-//     "\n"
-//     "ld __tmp_reg_, 0x78" "\n\t"
-//     "rcall Tx" "\n\t"
-//     "ld __tmp_reg_, 0x78" "\n\t"
-
-//     "rcall Tx" "\n\t"
-//     : /* no output */
-//     : "I"(col_start),
-//         "I"(col_end),
-//         "I"(pg_start),
-//         "I"(pg_end)
-//     );
-// }
 
 
 /*  i2c start sequence */
