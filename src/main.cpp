@@ -146,8 +146,9 @@ int main(void)
         // Tx(3);    // Start at page 4
         // Tx(3);    // End at page 4
         // stop();
+    // set_draw_region(BIT8_TO_BIT16(10,16),BIT8_TO_BIT16(0,3));
 
-    set_draw_region(BIT8_TO_BIT16(100,117),BIT8_TO_BIT16(1,1));
+    // set_draw_region(BIT8_TO_BIT16(100,117),BIT8_TO_BIT16(1,1));
 
     for (;;)
     {
@@ -163,11 +164,11 @@ int main(void)
         if (h > H_MAX)
             h = 0;
 
-        // update_enemy_pos();
+        update_enemy_pos();
 
         
 
-        // print_enemies();
+    set_draw_region(BIT8_TO_BIT16(100,117),BIT8_TO_BIT16(0,0));
 
         print_score();
 
@@ -181,8 +182,12 @@ int main(void)
         // Tx(0);    // Start at page 1
         // Tx(3);    // End at page 4
         // stop();
-        // print_player(h);
- 
+    set_draw_region(BIT8_TO_BIT16(10,16),BIT8_TO_BIT16(0,3));
+
+        print_player(h);
+     set_draw_region(BIT8_TO_BIT16(0,127),BIT8_TO_BIT16(3,3));
+
+        print_enemies();
 
         // h+=3;
     }

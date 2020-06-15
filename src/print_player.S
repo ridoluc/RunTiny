@@ -64,6 +64,7 @@ sprite_test:
 .byte 0x1f
 .byte 0x07
 .byte 0x02
+.byte 0x00
 
 ; 	out DDRB,r16
 ; 	out PORTB,r16
