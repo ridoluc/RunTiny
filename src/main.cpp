@@ -60,10 +60,12 @@ const uint8_t Init[26] = {
 // I2C Functions declaration
 extern "C"{void start();}
 extern "C"{void stop();}
-extern "C"{void set_draw_region(uint16_t, uint16_t);}
-extern "C"{bool Tx(uint8_t);}
+extern "C"{void Tx(uint8_t);}
+// uint8_t Rx(uint8_t);
 
-uint8_t Rx(uint8_t);
+
+extern "C"{void set_draw_region(uint16_t, uint16_t);}
+
 
 extern "C"{void print_player(uint8_t);}
 extern "C"{void print_enemies(void);}
@@ -72,18 +74,20 @@ extern "C"{void print_score(void);}
 
 int8_t enemy_pos[3] = {20, 50, 90};
 
+extern "C"{void clear_display(void);}
+
 void clear()
 {
     start();
     Tx(ADDR);
     Tx(0x40);
-    for (uint8_t i = 0; i < 128; i++)
+    uint8_t i = 255;
+    do
     {
         Tx(0x00);
         Tx(0x00);
-        Tx(0x00);
-        Tx(0x00);
-    }
+
+    }while(i--);
     stop();
 }
 
@@ -107,7 +111,7 @@ int main(void)
     stop();
 
     /* Clear the display */
-    clear();
+    clear_display();
 
     uint8_t h = 0;
 
@@ -147,74 +151,3 @@ int main(void)
 }
 
 
-/*  i2c start sequence */
-void start()
-{
-    SDA_ON;
-    dly();
-    SCL_ON;
-    dly();
-    SDA_OFF;
-    dly();
-    SCL_OFF;
-    dly();
-}
-
-/*  i2c stop sequence */
-void stop()
-{
-    SDA_OFF;
-    dly();
-    SCL_ON;
-    dly();
-    SDA_ON;
-    dly();
-}
-
-/* Transmit 8 bit data to slave */
-bool Tx(uint8_t dat)
-{
-    for (uint8_t i = 0; i < 8; i++)
-    {
-        (dat & 0x80) ? SDA_ON : SDA_OFF;
-        dat <<= 1;
-        dly();
-        SCL_ON;
-        dly();
-        SCL_OFF;
-        dly();
-    }
-
-    SDA_ON;
-    SCL_ON;
-    dly();
-    bool ack = !SDA_READ; // Acknowledge bit
-    SCL_OFF;
-    return ack;
-}
-
-/* Receive 8 bit packet data from the slave. Check for clock stretching*/
-uint8_t Rx(bool ack)
-{
-    uint8_t dat = 0;
-    SDA_ON;
-    for (uint8_t i = 0; i < 8; i++)
-    {
-        dat <<= 1;
-        do
-        {
-            SCL_ON;
-        } while (SCL_READ == 0); //SCL stretching
-        dly();
-        if (SDA_READ)
-            dat |= 1;
-        dly();
-        SCL_OFF;
-    }
-    ack ? SDA_OFF : SDA_ON;
-    SCL_ON;
-    dly();
-    SCL_OFF;
-    SDA_ON;
-    return (dat);
-}
