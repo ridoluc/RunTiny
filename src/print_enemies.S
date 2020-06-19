@@ -1,13 +1,15 @@
+; 
+; Registers used: R19, R21, R22, R20 (Tx)
+
+
 #include <avr/io.h>
 
 sprite_obstacle:
 .byte 0x18,0x20,0xfe,0xfc,0x30,0x1e
 
-#define x_pos       R16
-#define col_cnt     R17
-#define sprite_w    R18
-
-
+#define col_cnt     R19
+#define x_pos       R21
+#define sprite_w    R22
 
 
 ; .section .data
@@ -58,51 +60,4 @@ blank_col:
 
 ret
 
-
-#define STEP 2
-
-.global update_enemy_pos
-
-
-update_enemy_pos:
-    lds R16, enemy_pos
-    lds R17, enemy_pos +1
-    lds R18, enemy_pos +2
-    
-    ;update position enemy 1
-    ; subi R16, STEP
-    ; brpl .+2        ; If enemy 1 position is >0 don't set to 0
-    ; ldi R16, 0x00
-    
-    ;update position enemy 3
-    subi R18, STEP
-    brpl enemy_generated
-    
-    ;generate enemy
-    
-    ; provisional enemy generation
-    ldi R18, 0x00
-    cpi R17, 95  ;if enemy 2 is in x=95
-    brpl .+2
-    ldi R18, 120
-
-enemy_generated:
-    ;update position enemy 2
-    subi R17, STEP
-    brpl .+4
-    mov R17, R18
-    ldi R18, 0x00
-    
-    ;update position enemy 1
-    subi R16, STEP
-    brpl .+6
-    mov R16, R17
-    mov R17, R18
-    ldi R18, 0x00
-
-    ; store variables in SRAM
-    sts enemy_pos, R16
-    sts enemy_pos +1, R17
-    sts enemy_pos +2, R18
-ret
 
