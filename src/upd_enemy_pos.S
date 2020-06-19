@@ -6,7 +6,7 @@
 #define pos3 R20
 
 
-#define STEP 2
+#define STEP 3
 
 .global update_enemy_pos
 

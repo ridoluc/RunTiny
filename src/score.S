@@ -1,13 +1,10 @@
 ; 
-; Registers used: R23, R24, R25
+; Registers used: R23, R24, R25, R19
 
 
 #define W 5
 
-; .global score_digit_3
-
-; #define score_digit_2 score_digit_1+1
-; #define score_digit_3 score_digit_1+2
+#define tmp R19
 
 
 
@@ -65,10 +62,10 @@ print_digit:
     ldi ZL, lo8(font_digit)
     add ZL, R24
     adc ZH, R25
-    ldi R17, W-1  ; counter same as digit width
+    ldi tmp, W-1  ; counter same as digit width
     ld R24, Z+
     rcall Tx
-    dec R17
+    dec tmp
     brpl .-8
     ldi R24, 0
     rcall Tx

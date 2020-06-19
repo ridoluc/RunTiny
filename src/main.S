@@ -13,10 +13,13 @@
 #define OLED_ADDR       0x78
 #define OLED_COMMANDS   0x00
 #define OLED_DATA       0x40
+#define JUMP_SPEED      4
+#define H_MAX           19
 
 
-#define H       R16
-#define tmp     R19
+#define H           R16
+#define jump        R17
+#define tmp         R19
 
 
 .section .rodata
@@ -42,12 +45,20 @@ display_init:
 .section .data
 .global enemy_pos
 enemy_pos:
-.word 0x3214
-.byte 0x5a
+    .word 0x3214
+    .byte 0x5a
+
+
 
 .section .text
 .global main
 .global __do_copy_data
+.global INT0_vect
+
+
+INT0_vect:
+    ldi jump, JUMP_SPEED
+    reti
 
 main:
 ; System initialization
@@ -56,6 +67,11 @@ main:
     ldi	    tmp, 0x04	; Set pull-up on Button Pin PB4
     out	    PUEB, tmp	
 
+
+    sei                     ; Enable interrupts
+    sbi     EIMSK, INT0     ; Enable External Interrupt Request 0
+    sbi     EICRA, ISC01    ; Interrupt activated on falling edge of PB2 (INT0)
+
     ; ldi     tmp, 0x00
     ; sts     score_digit_3, tmp
     ; lds tmp, enemy_pos
@@ -63,7 +79,7 @@ main:
 ; Delay of 50ms before OLED initialization
     ldi     R24, 0xD3
     ldi     R25, 0x30
-    rcall _delay
+    rcall   _delay
 
 ; OLED Display Initialization
     ldi     ZL, lo8(display_init)
@@ -105,6 +121,17 @@ infinite_loop:
     ldi     R25, 0x61
     rcall _delay
 
+; Move the player
+    add     H, jump     ; Change height by jump direction
+    cpi     H, H_MAX    ; Check if H_MAX is reached
+    brlo    .+4
+    ldi     jump, -JUMP_SPEED     ; Start falling
+    rjmp    .+6
+    tst     H           ; Check if heigh is 0
+    brne    .+2
+    ldi     jump, 0x00  ; If ground reached speed is 0
+
+; Print the score
     ldi	    r22, 0x00	; 0
     ldi	    r23, 0x00	; 0
     ldi	    r24, 0x64	; 100
@@ -112,6 +139,7 @@ infinite_loop:
     rcall	set_draw_region    	
     rcall	print_score   
 
+; Update and print the enemies
     rcall   update_enemy_pos
     ldi	    r22, 0x03	; 3
     ldi	    r23, 0x03	; 3
@@ -120,15 +148,14 @@ infinite_loop:
     rcall	set_draw_region  
     rcall   print_enemies
 
-
-
+; Print the player
     ldi	    r22, 0x00	; 0
     ldi	    r23, 0x03	; 3
     ldi	    r24, 0x0A	; 10
     ldi	    r25, 0x10	; 16
     rcall   set_draw_region
 
-    ldi     R24, 0x00
+    mov     R24, H
     rcall   print_player
 
  	
