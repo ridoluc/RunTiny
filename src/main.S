@@ -19,6 +19,7 @@
 
 #define H           R16
 #define jump        R17
+#define enemy_x     R18
 #define tmp         R19
 
 
@@ -132,33 +133,53 @@ infinite_loop:
     ldi     jump, 0x00  ; If ground reached speed is 0
 
 ; Print the score
-    ldi	    r22, 0x00	; 0
-    ldi	    r23, 0x00	; 0
-    ldi	    r24, 0x64	; 100
-    ldi	    r25, 0x75	; 117
+    ldi	    r22, 0x00	; 0 - Page
+    ldi	    r23, 0x00	; 0 - Page
+    ldi	    r24, 0x64	; 100 - Column
+    ldi	    r25, 0x75	; 117 - Column
     rcall	set_draw_region    	
     rcall	print_score   
 
 ; Update and print the enemies
     rcall   update_enemy_pos
-    ldi	    r22, 0x03	; 3
-    ldi	    r23, 0x03	; 3
-    ldi	    r24, 0x00	; 0
-    ldi	    r25, 0x7F	; 127
+    ldi	    r22, 0x03	; 3 - Page
+    ldi	    r23, 0x03	; 3 - Page
+    ldi	    r24, 0x00	; 0 - Column
+    ldi	    r25, 0x7F	; 127 - Column
     rcall	set_draw_region  
     rcall   print_enemies
 
 ; Print the player
-    ldi	    r22, 0x00	; 0
-    ldi	    r23, 0x03	; 3
-    ldi	    r24, 0x0A	; 10
-    ldi	    r25, 0x10	; 16
+    ldi	    r22, 0x00	; 0 - Page
+    ldi	    r23, 0x03	; 3 - Page
+    ldi	    r24, 0x0A	; 10 - Column
+    ldi	    r25, 0x10	; 16 - Column
     rcall   set_draw_region
 
     mov     R24, H
     rcall   print_player
 
  	
+; Check if GAME OVER
+    lds     enemy_x, enemy_pos 
+    cpi     enemy_x, 16   ; Enemy position lower than player position
+    brsh    infinite_loop
+    cpi     enemy_x, 10   ; Enemy passed 
+    brlo    infinite_loop
+    cpi     H, 8            ; Player above enemy
+    brsh    infinite_loop
+
+; GAME OVER
+ 	ldi     tmp, 4
+    ldi     R18, 0xA6    
+game_over: 
+    rcall   invert_display
+; Delay
+    ldi     R24, 0xFF
+    ldi     R25, 0xFF
+    rcall   _delay
+    dec     tmp
+    brne    game_over
 
     rjmp    infinite_loop
 
@@ -178,3 +199,19 @@ _delay:
     brne	.-6
 ret
 
+invert_display:
+    rcall	start    	
+    ldi	    R24, OLED_ADDR	    ; OLED Address
+    rcall	Tx    	
+    ldi	    R24, OLED_COMMANDS	    ; OLED Data
+    rcall	Tx
+    ldi     R24, 0x01
+    eor     R18, R24
+    mov     R24, R18
+    rcall	Tx     
+    ldi     R24, 0x00
+    rcall	Tx  
+    ldi     R24, 0x00
+    rcall	Tx     
+    rcall	stop  
+ret
