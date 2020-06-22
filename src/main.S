@@ -116,9 +116,9 @@ main:
 
 infinite_loop:
 
-; Delay of 100ms to set frame rate
-    ldi     R24, 0xA7
-    ldi     R25, 0x61
+; Delay of 50ms to set frame rate
+    ldi     R24, 0xD3
+    ldi     R25, 0x30
     rcall _delay
 
 ; Move the player
