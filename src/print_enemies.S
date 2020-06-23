@@ -27,20 +27,22 @@ print_enemies:
     rcall Tx
     
     ; Init print enemies
-    ldi col_cnt, 0
+    ldi     col_cnt, 0x00       ; Start from column 0
     ; ldi R24,70
     ; sts enemy_pos, R24
-    ldi YL, lo8(enemy_pos)
-    ldi YH, hi8(enemy_pos)
-    ld x_pos, Y+; here load position
-    ; ldi x_pos, 50
-    rjmp blank_col
+    ldi     YL, lo8(enemy_pos)  ; Pointer to enemies position 
+    ldi     YH, hi8(enemy_pos)
+    ld      x_pos, Y+            ; Load 1st enemy position
+    tst     x_pos
+    brne    .+4
+    ld      x_pos, Y+
+    ; rjmp blank_col
 loop_comlumns:
-    cp  col_cnt, x_pos  ; compare enemy position with current column drawn
-    brne blank_col
-    ldi ZL, lo8(sprite_obstacle+0x4000)
-    ldi ZH, hi8(sprite_obstacle+0x4000)
-    ldi sprite_w, 5 ; Sprite width -1
+    cp      col_cnt, x_pos      ; Compare enemy position with current column drawn
+    brne    blank_col
+    ldi     ZL, lo8(sprite_obstacle+0x4000)
+    ldi     ZH, hi8(sprite_obstacle+0x4000)
+    ldi     sprite_w, 5         ; Sprite width -1
 print_sprite:
     ld R24, Z+
     rcall Tx
