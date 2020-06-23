@@ -7,9 +7,11 @@
 #define tmp R19
 
 
+.global score_digit_1
+.global score_digit_2
+.global score_digit_3
 
 .section .data
-; ; score_digit_1: .space 3
 score_digit_1: .byte 0x00
 score_digit_2: .byte 0x00
 score_digit_3: .byte 0x00

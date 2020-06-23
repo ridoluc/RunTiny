@@ -73,9 +73,7 @@ main:
     sbi     EIMSK, INT0     ; Enable External Interrupt Request 0
     sbi     EICRA, ISC01    ; Interrupt activated on falling edge of PB2 (INT0)
 
-    ; ldi     tmp, 0x00
-    ; sts     score_digit_3, tmp
-    ; lds tmp, enemy_pos
+
 
 ; Delay of 50ms before OLED initialization
     ldi     R24, 0xD3
@@ -113,6 +111,12 @@ main:
     subi	tmp, 0x01
     brne	.-12     	
     rcall	stop   	
+
+reset_game:
+    ldi     tmp, 0x00
+    sts     score_digit_1, tmp
+    sts     score_digit_2, tmp
+    sts     score_digit_3, tmp
 
 
 infinite_loop:
@@ -153,7 +157,7 @@ infinite_loop:
     ldi	    r22, 0x00	; 0 - Page
     ldi	    r23, 0x03	; 3 - Page
     ldi	    r24, 0x0A	; 10 - Column
-    ldi	    r25, 0x10	; 16 - Column
+    ldi	    r25, 0x11	; 17 - Column
     rcall   set_draw_region
 
     mov     R24, H
@@ -181,7 +185,7 @@ game_over:
     dec     tmp
     brne    game_over
 
-    rjmp    infinite_loop
+    rjmp    reset_game
 
 
 

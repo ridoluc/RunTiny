@@ -26,17 +26,14 @@ print_enemies:
     ldi R24, 0x40
     rcall Tx
     
-    ; Init print enemies
+; Init print enemies
     ldi     col_cnt, 0x00       ; Start from column 0
-    ; ldi R24,70
-    ; sts enemy_pos, R24
     ldi     YL, lo8(enemy_pos)  ; Pointer to enemies position 
     ldi     YH, hi8(enemy_pos)
     ld      x_pos, Y+            ; Load 1st enemy position
     tst     x_pos
-    brne    .+4
+    brne    .+4                 ; If first pos = 0 load nexte
     ld      x_pos, Y+
-    ; rjmp blank_col
 loop_comlumns:
     cp      col_cnt, x_pos      ; Compare enemy position with current column drawn
     brne    blank_col

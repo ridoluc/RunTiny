@@ -22,14 +22,14 @@ print_player:
     rcall Tx
     ldi R24, 0x40
     rcall Tx
-    ldi _col, 7 ;same as the sprite width 
-    ldi ZL, lo8(sprite_test+0x4000) 
-    ldi ZH, hi8(sprite_test+0x4000) 
+    ldi _col, 8 ;same as the sprite width 
+    ldi ZL, lo8(player_sprite+0x4000) 
+    ldi ZH, hi8(player_sprite+0x4000) 
 loop_columns:
     ldi page1, 0x00
     ldi page2, 0x00
-    ldi page3, 0x00
-    ld page4, Z+
+    ld page3, Z+        ; Upper half of the sprite
+    ld page4, Z+        ; Lower half of the sprite
 	mov _h, R26
     rjmp dec_h
 loop_h:
@@ -56,17 +56,12 @@ dec_h:
 ret
 
 
-sprite_test: 
-.byte 0x1c
-.byte 0xf8
-.byte 0x38
-.byte 0xfe
-.byte 0x1f
-.byte 0x07
-.byte 0x02
-.byte 0x00
-
-; 	out DDRB,r16
-; 	out PORTB,r16
-; Start:
-; 	rjmp Start
+player_sprite: 
+.byte 0x00, 0x0e
+.byte 0x00, 0x18
+.byte 0x00, 0xfc
+.byte 0x00, 0x3f
+.byte 0xc0, 0xff
+.byte 0xe0, 0x1f
+.byte 0xa0, 0x04
+.byte 0xc0, 0x08
