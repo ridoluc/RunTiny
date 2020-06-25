@@ -54,7 +54,7 @@ enemy_pos:
 
 .section .text
 .global main
-.global __do_copy_data
+; .global __do_copy_data
 .global INT0_vect
 
 
@@ -74,15 +74,17 @@ main:
     sbi     EIMSK, INT0     ; Enable External Interrupt Request 0
     sbi     EICRA, ISC01    ; Interrupt activated on falling edge of PB2 (INT0)
 
-; ; Sleep mode
-;     sbi     SMCR, SE
-;     sbi     SMCR, SM1       ; Sleep Mode
+; Sleep mode
+    ldi     tmp, 0x05       ; Enable sleep mode and select power down
+    out     SMCR, tmp       ; 
 
+reset_game:
 
 ; Delay of 50ms before OLED initialization
     ldi     R24, 0xD3
     ldi     R25, 0x30
     rcall   _delay
+
 
 ; OLED Display Initialization
     ldi     ZL, lo8(display_init)
@@ -116,12 +118,19 @@ main:
     brne	.-12     	
     rcall	stop   	
 
-reset_game:
+; Reset Score
     ldi     tmp, 0x00
     sts     score_digit_1, tmp
     sts     score_digit_2, tmp
     sts     score_digit_3, tmp
- 
+
+; Reset player position 
+    ldi     H, 0x00
+    sts     enemy_pos+2, tmp
+    ldi     tmp, 120
+    sts     enemy_pos+1, tmp
+    ldi     tmp, 90
+    sts     enemy_pos, tmp
 infinite_loop:
 
 ; Delay of 50ms to set frame rate
@@ -188,6 +197,18 @@ game_over:
     dec     tmp
     brne    game_over
 
+; Display Off
+    rcall	start    	
+    ldi	    R24, OLED_ADDR	    ; OLED Address
+    rcall	Tx    	
+    ldi	    R24, OLED_COMMANDS	; OLED Commands
+    rcall	Tx
+    ldi     R24, 0xAE
+    rcall	Tx     
+    rcall	stop  
+
+    sleep
+
     rjmp    reset_game
 
 
@@ -210,7 +231,7 @@ invert_display:
     rcall	start    	
     ldi	    R24, OLED_ADDR	    ; OLED Address
     rcall	Tx    	
-    ldi	    R24, OLED_COMMANDS	    ; OLED Data
+    ldi	    R24, OLED_COMMANDS	; OLED Commands
     rcall	Tx
     ldi     R24, 0x01
     eor     R18, R24
