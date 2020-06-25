@@ -32,7 +32,7 @@ print_enemies:
     ldi     YH, hi8(enemy_pos)
     ld      x_pos, Y+            ; Load 1st enemy position
     tst     x_pos
-    brne    .+4                 ; If first pos = 0 load nexte
+    brne    .+4                 ; If first pos = 0 load next
     ld      x_pos, Y+
 loop_comlumns:
     cp      col_cnt, x_pos      ; Compare enemy position with current column drawn

@@ -4,10 +4,17 @@
 #define pos1 R18
 #define pos2 R19
 #define pos3 R20
+#define tmp1 R24
+
 
 
 #define STEP 3
 
+.section .data
+rand: .byte 103     // RNG Seed
+
+
+.section .text
 .global update_enemy_pos
 
 update_enemy_pos:
@@ -22,14 +29,27 @@ update_enemy_pos:
     
 ; Update position Enemy 3
     subi pos3, STEP         ; Move enemy position by STEP
-    brpl enemy_generated    ; If position is negative then generate the enemy
+    brpl enemy_generated    ; If position is <=0 then generate the enemy
     
 ; Generate enemy  
 ; Provisional enemy generation
-    ldi pos3, 0x00
-    cpi pos2, 95  ;if enemy 2 is in x=95
-    brpl .+2
-    ldi pos3, 120
+    ldi     pos3, 0x00
+    cpi     pos2, 105       ; If enemy 2 position>105 no new enemy(min distance between two enemies is 15)
+    brpl    enemy_generated
+    cpi     pos2, 70        ; Generate enemy 3 if enemy 2 is in x<90 (max distance between two enemies is 30)
+    brmi    new_enemy
+; Xorshift RNG (kind of...)
+    lds     tmp1, rand
+    mov     pos3, tmp1
+    lsl     pos3
+    eor     tmp1, pos3
+    eor     tmp1, R16       ; XOR with player height that is quite random
+    sts     rand, tmp1
+    ldi     pos3, 0x00
+    cpi     tmp1, 190
+    brlo    enemy_generated
+new_enemy:    
+    ldi     pos3, 120
 
 enemy_generated:
 ; Update position Enemy 2

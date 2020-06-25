@@ -46,8 +46,9 @@ display_init:
 .section .data
 .global enemy_pos
 enemy_pos:
-    .word 0x3214
-    .byte 0x5a
+    .byte 90
+    .byte 121
+    .byte 0
 
 
 
@@ -68,11 +69,14 @@ main:
     ldi	    tmp, 0x04	; Set pull-up on Button Pin PB4
     out	    PUEB, tmp	
 
-
+; Button interrupt
     sei                     ; Enable interrupts
     sbi     EIMSK, INT0     ; Enable External Interrupt Request 0
     sbi     EICRA, ISC01    ; Interrupt activated on falling edge of PB2 (INT0)
 
+; ; Sleep mode
+;     sbi     SMCR, SE
+;     sbi     SMCR, SM1       ; Sleep Mode
 
 
 ; Delay of 50ms before OLED initialization
@@ -117,8 +121,7 @@ reset_game:
     sts     score_digit_1, tmp
     sts     score_digit_2, tmp
     sts     score_digit_3, tmp
-
-
+ 
 infinite_loop:
 
 ; Delay of 50ms to set frame rate
