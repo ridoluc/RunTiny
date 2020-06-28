@@ -3,9 +3,9 @@ Endless runner game developed for the AVR ATtiny10 microcontroller and a 128x32 
 The input is provided by a push-button so that the entire set-up requires just 3 components (besides power source).
 
 The entire code is written in assembly to optimize the space and fit it into the 1kB flash memory. 
-The entire firmware occupies [700] bytes of flash memory. It contains the game as well as handling the microcontroller I/O and display communication (through TWI).
+The entire firmware occupies 778 bytes of flash memory. It contains the game as well as handling the microcontroller I/O and display communication (through TWI).
 
-![RunTiny - ATtiny10 Game](./assets/game.png)
+![RunTiny - ATtiny10 Game](./assets/RunTiny_game.jpg)
 
 ## Usage
 The game mechanics is quite intuitive: use the button to jump the obstacles.

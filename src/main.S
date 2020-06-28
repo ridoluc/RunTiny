@@ -4,8 +4,6 @@
 ; R18:  First enemy position
 ; R19:  Temporary, set_draw_region
 ; R20:  Tx
-; 
-; 
 
 
 #include <avr/io.h>
