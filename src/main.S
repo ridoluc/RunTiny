@@ -1,3 +1,6 @@
+
+
+
 ; REGISTERS USAGE
 ; R16:  Player Height
 ; R17:  Jump speed
@@ -57,7 +60,7 @@ enemy_pos:
 
 
 INT0_vect:
-    ldi jump, JUMP_SPEED
+    ldi jump, JUMP_SPEED    ; Set the vertical jump speed to +4
     reti
 
 main:
@@ -176,11 +179,11 @@ infinite_loop:
  	
 ; Check if GAME OVER
     lds     enemy_x, enemy_pos 
-    cpi     enemy_x, 16   ; Enemy position lower than player position
+    cpi     enemy_x, 16     ; Enemy position higher than player position. Don't care player height
     brsh    infinite_loop
-    cpi     enemy_x, 10   ; Enemy passed 
+    cpi     enemy_x, 10     ; Enemy has passed. Don't care player height
     brlo    infinite_loop
-    cpi     H, 8            ; Player above enemy
+    cpi     H, 8            ; Otherwise check if player is above enemy
     brsh    infinite_loop
 
 ; GAME OVER

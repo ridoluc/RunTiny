@@ -7,9 +7,12 @@ The entire firmware occupies 778 bytes of flash memory. It contains the game as 
 
 ![RunTiny - ATtiny10 Game](./assets/RunTiny_game.jpg)
 
+
+
 ## Usage
 The game mechanics is quite intuitive: use the button to jump the obstacles.
 When an obstacle hits the player the microcontroller goes into sleep mode. A new button press will awake the microcontroller and restart the game.
+<div><img src="./assets/RunTiny.GIF" width=350px></div>
 
 ## Power Source
 Anything between 3.3V-4.5V will do. 
@@ -31,7 +34,14 @@ If you use PlatformIO you can follow [this guide](http://www.bitbanging.space/po
 As an alternative, it can be compiled using avr-gcc directly.
 
 ## Firmware Upload
-If you just want to upload the firmware, you can do so using avrdude and USBASP. Be sure the USBASP jumper is set on 5V and the firmware is up to date (the firmware loaded on most devices sold doesn't support TPI required for the ATTiny10). You can use [these instructions](http://www.bitbanging.space/posts/usbasp-firmware-update) to update the USBASP firmware.
+If you just want to upload the firmware, you can do so using avrdude and USBASP. 
+
+Be sure the USBASP jumper is set on 5V and the firmware is up to date (the firmware loaded on most devices sold doesn't support TPI required for the ATTiny10). You can use [these instructions](http://www.bitbanging.space/posts/usbasp-firmware-update) to update the USBASP firmware.
+
+Use this command (mind the paths of avrdude and its config file):
+```
+./avrdude -e -v -p attiny10 -C ./avrdude.conf -c usbasp -U flash:w:firmware.hex:i -P usb
+```
 
 ## ATtiny85 and more
-The game should work on other AVR devices (i.e. ATtiny85) with minor changes or none at all (not tested yet though).
+The game should work on other AVR devices (i.e. ATtiny85) with minor changes (not tested yet though).
