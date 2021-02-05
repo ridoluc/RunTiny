@@ -2,8 +2,7 @@
 .vscode
 fir.txt
 firmware_old.txt
-TinyGame Notes.ipynb
+RunTinyNotes.ipynb
 .ipynb_checkpoints
 .travis.yml
 src/main.txt
-

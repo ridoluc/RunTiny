@@ -26,12 +26,11 @@
 
 .section .rodata
 
-display_init: 
+display_init:
 .byte   0xAE        ; Display OFF
 .byte   0xA8, 0x1F  ; set multiplex (HEIGHT-1): 0x1F for 128x32, 0x3F for 128x64
 .byte   0xD3, 0x00  ; Display offset to 0
 .byte   0x40        ; Set display start line to 0
-.byte   0x8D, 0x14  ; Charge pump enabled
 .byte   0x20, 0x01  ; Memory addressing mode 0x00 Horizontal 0x01 Vertical
 .byte   0xDA, 0x02  ; Set COM Pins hardware configuration to sequential
 .byte   0x81, 0x80  ; Set contrast
@@ -40,6 +39,8 @@ display_init:
 
 .byte   0x22, 0x00, 0x03 ; Page min to max
 .byte   0x21, 0x00, 0x7F ; Column min to max
+
+.byte   0x8D, 0x14  ; Charge pump enabled
 
 .byte   0xAF        ; Display on
 .byte   0x00
@@ -204,6 +205,10 @@ game_over:
     rcall	Tx    	
     ldi	    R24, OLED_COMMANDS	; OLED Commands
     rcall	Tx
+    ldi     R24, 0x8D
+    rcall	Tx    
+    ldi     R24, 0x10
+    rcall	Tx    
     ldi     R24, 0xAE
     rcall	Tx     
     rcall	stop  
