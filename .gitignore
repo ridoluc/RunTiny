@@ -6,3 +6,4 @@ RunTinyNotes.ipynb
 .ipynb_checkpoints
 .travis.yml
 src/main.txt
+.DS_Store
